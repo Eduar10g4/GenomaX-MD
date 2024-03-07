@@ -1,9 +1,7 @@
 import React from "react";
 import { IoIosPaper } from "react-icons/io";
-import PruebaHc from "../../components/HistoriaClinica/PruebaHc";
-import LoadingClinicalHistory from "../../components/HistoriaClinica/loadingClinicalHistory";
 
-const historiaClinica = () => {
+const HistoriaClinica = () => {
   return (
     <>
       {/*Contenedor Principal*/}
@@ -24,12 +22,9 @@ const historiaClinica = () => {
             Historia clínica
           </h1>
         </div>
-        <div className="">
-          <LoadingClinicalHistory />
-        </div>
       </div>
     </>
   );
 };
 
-export default historiaClinica;
+export default HistoriaClinica;

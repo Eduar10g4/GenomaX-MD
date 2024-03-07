@@ -10,7 +10,7 @@ const LayoutDashboard = ({ children }) => {
    // const [isWizard, setIsWizard] = useState(true)
 
     return (
-        <div className='w-full h-full'>
+        <div className='fixed w-full h-full'>
             {/**  {isWizard ? <Wizard estado={setIsWizard} /> : null}  */}
             <DashboardMd>
               <div className='w-full h-full'>{children}</div>  
