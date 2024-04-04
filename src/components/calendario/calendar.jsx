@@ -6,12 +6,20 @@ import './styleCalendar.css'
 
 const CalendarMd = () => {
     return (
-        <div className="w-full h-full p-4 space-y-4 ">
-            <div className="h-max p-4 border space-y-4 bg-white bg-opacity-95 rounded-md">
+        <div className="w-full h-max p-4 space-y-4 overflow-y-auto">
+            <div className="p-4 border space-y-4 bg-white bg-opacity-95 rounded-md shadow-lg">
                 <h1 className="text-emerald-500 text-xl">Agenda tu cita</h1>
-                <div className="flex gap-2">
-                    <input type="text" className="w-[50%] pl-2 text-gray-700 font-bold shadow-md bg-gray-300/90 rounded-md text-[13px] border-[1px] border-gray-300 py-2 focus:outline-none focus:bg-gray-100" />
-                    <select name="" id="" className="w-[50%] pl-2 text-gray-700 font-bold shadow-md bg-gray-300/90 rounded-md text-[13px] border-[1px] border-gray-300 py-2 focus:outline-none focus:bg-gray-100"></select>
+                <div className="flex items-center gap-2">
+                    <div className="w-[50%] flex flex-col">
+                        <label htmlFor="">Especialidad</label>
+                        <input type="text" className="w-full text-sm text-gray-700 shadow-sm border-2 rounded-md focus:outline-none focus:bg-white focus:border-2 focus:border-blue-500 p-2" placeholder="Buscar por especialidad ..." />
+                    </div>
+                    <div className="w-[50%] flex flex-col">
+                        <label htmlFor="">Doctor</label>
+                        <select name="" id="" className="w-full pl-2 text-gray-700 font-bold shadow-md bg-gray-300/90 rounded-md text-[13px] border-[1px] border-gray-300 py-2 focus:outline-none focus:bg-gray-100">
+                            <option value="" >Selecciona un doctor...</option>
+                        </select>
+                    </div>
                 </div>
                 <div className="flex justify-center">
                     <Calendar />
@@ -32,7 +40,7 @@ const CalendarMd = () => {
                                     <button
                                         type="submit"
                                         className={`bg-blue-500 text-white px-4 py-2 mt-4 rounded hover:bg-blue-700 `}
-                                       // disabled={isSaveButtonDisabled}
+                                    // disabled={isSaveButtonDisabled}
                                     >
                                         Guardar Cita
                                     </button>

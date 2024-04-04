@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { routes } from "./dataSidebar";
 import { Link } from "react-router-dom";
-import favicon from "../assets/favicon.ico"
+import favicon from "../../assets/img/favicon.ico"
 import { IoIosArrowForward } from "react-icons/io";
 import { RiMenuFoldFill } from "react-icons/ri";
-import Navbar from "../navbar/navbar";
+//import Navbar from "../components/navbar/navbar";
 
 const Sidebar = (props) => {
     const [activeIndex, setActiveIndex] = useState(null);
@@ -23,7 +23,7 @@ const Sidebar = (props) => {
     };
 
     return (
-        <div className={`min-w-56 h-full flex flex-col bg-sky-800 bg-opacity-50 backdrop-blur-sm rounded-br-lg shadow-md shadow-gray-800 text-gray-100 ${open ? 'min-w-max' : ''}`}>
+        <div className={`min-w-56 h-full flex flex-col bg-sky-800 rounded-br-lg shadow-md shadow-gray-800 text-gray-100 ${open ? 'min-w-max' : ''}`}>
             <button className="p-4 pb-0" onClick={() => setOpen(!open)}><RiMenuFoldFill className={`h-6 w-6 ${open ? 'rotate-180' : ''}`} /></button>
             <div className={`flex items-center justify-center gap-2 py-4 pr-4 ${open ? 'px-4' : ''}`}>
                 <img src={favicon} alt="" className={`w-11 h-11 ${open ? '' : ''}`} />

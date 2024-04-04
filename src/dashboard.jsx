@@ -1,6 +1,6 @@
 import React from "react";
-import Sidebar from "./sidebar/sidebar";
-import Navbar from "./navbar/navbar";
+import Sidebar from "./components/sidebar/sidebar";
+import Navbar from "./components/navbar/navbar";
 
 const DashboardMd = (props) => {
     return(
