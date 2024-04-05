@@ -6,9 +6,9 @@ const Option1 = () => {
   
   return (
     <>
-      <div className="w-full h-full ">
+    
         <Calendar_Md />
-      </div>
+     
     </>
   )
 }

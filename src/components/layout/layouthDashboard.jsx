@@ -12,11 +12,11 @@ const LayoutDashboard = ({ children }) => {
     // const [isWizard, setIsWizard] = useState(true)
 
     return (
-        <div className="w-full h-full flex">
+        <div className="w-full h-screen flex">
             <Sidebar />
             <div className="w-full h-full">
                 <Navbar />
-                {children}
+               <div className='w-full h-full overflow-y-auto'>{children}</div> 
             </div>
         </div>
     )

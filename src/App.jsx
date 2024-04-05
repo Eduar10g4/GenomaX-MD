@@ -3,6 +3,9 @@ import './App.css'
 //import Sidebar from './sidebar/sidebar'
 //import fondo from './assets/fondo.png';
 import Login from './components/login/login';
+import Dashboard from './pages/Dashboard';
+import LayoutDashboard from './components/layout/layouthDashboard';
+import CalendarMd from './components/calendario/calendar';
 
 function App() {
 
@@ -10,6 +13,7 @@ function App() {
     <>
       <div className='w-full h-full'>
         <Login />
+       {/** <CalendarMd /> */}
       </div>
     </>
   )
