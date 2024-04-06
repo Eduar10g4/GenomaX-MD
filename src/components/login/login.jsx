@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import Register from '../register/register';
 import EmailRecuperacion from '../modals/emailRecuperacion';
-import Calendar from 'react-calendar';
+import CalendarMd from '../calendario/calendar';
 
 const Login = () => {
 
@@ -92,7 +92,7 @@ const Login = () => {
     }
 
     // Encriptar la contraseña antes de enviarla al servidor
-    const hashedPassword = await bcrypt.hash(password, 12);
+    //const hashedPassword = await bcrypt.hash(password, 12);
 
     const formData = new FormData();
     formData.append('ID_USR', username);
@@ -101,8 +101,9 @@ const Login = () => {
     // Capturar parámetros de la URL
     const params = new URLSearchParams(window.location.search);
     const nxsdbParam = params.get('nxsdb');
-    setNxsdb(nxsdbParam);
     const codigoUSRParam = params.get('Codigo_USR');
+
+    setNxsdb(nxsdbParam);
 
     // Verificar si los parámetros están presentes y agregarlos al FormData
     if (nxsdbParam) {
@@ -155,8 +156,10 @@ const Login = () => {
         text: 'Ocurrió un error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.',
       });
     }
-    setFormSubmitted(false)
+   // setFormSubmitted(false)
   };
+
+  console.log(nxsdb);
 
   return (
     <>
@@ -269,7 +272,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-     <div className='hidden'><Calendar nxsdb={nxsdb} /></div>
+     <div className='invisible'><CalendarMd nxsdb={nxsdb} /></div>
     </>
 
   );

@@ -7,13 +7,17 @@ import './styleCalendar.css'
 
 const CalendarMd = ({ nxsdb }) => {
 
+    console.log(nxsdb);
+
     const [codigo_USR, setCodigo_USR] = useState('');
     const [token, setToken] = useState('');
     const [specialties, setSpecialties] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [inputFocused, setInputFocused] = useState(false);
+    const [selectedSpecialty, setSelectedSpecialty] = useState('');
 
+    {/** useEffect para Obtener los valores de token y codigo Usuario **/ }
     useEffect(() => {
-        // Obtener los valores de token y codigo Usuario
         const token = sessionStorage.getItem('token');
         const activoUSR = sessionStorage.getItem('Activo_USR');
         setToken(token);
@@ -21,11 +25,16 @@ const CalendarMd = ({ nxsdb }) => {
 
     }, [])
 
+    {/*** Funciones para especialidades ***/ }
+
+    {/** Endpoint que me lista todas las especialidades **/ }
     const handleSpecialties = async () => {
 
+       console.log(nxsdb);
+
         const formData = new FormData();
-        formData.append('Codigo_USR', codigo_USR);
         formData.append('nxs_db', nxsdb);
+        formData.append('Codigo_USR', codigo_USR);
 
         setLoading(true);
 
@@ -42,33 +51,73 @@ const CalendarMd = ({ nxsdb }) => {
                 const data = await response.json();
                 console.log(data);
                 setSpecialties(data.Especialidades);
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Login exitoso',
-                    text: 'Bienvenido!',
-                });
+                //console.log('Consumo Exitoso')
 
             } else {
                 // Si la respuesta tiene error, mostrar mensaje de error
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error en el login',
-                    text: 'Credenciales inválidas',
-                });
+                console.log("error")
             }
         } catch (error) {
             // Si hay un error en la solicitud, mostrar mensaje de error
             console.error('Error al enviar la solicitud:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Ocurrió un error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.',
-            });
         } finally {
             setLoading(false);
         }
     };
+
+    {/** Funcion para capturar el codigo de la especialidad **/ }
+    const handleSpecialtyClick = (codigoEsp) => {
+        setSelectedSpecialty(codigoEsp);
+        //console.log(codigoEsp);
+
+        handleDoctor();
+    };
+
+    {/** Funcion para retrasar el cierre del modal y poder capturar el codigo_ESP **/ }
+    const handleDiley = () => {
+        setTimeout(() => {
+            setInputFocused(false); // Cierra el modal después de 200 milisegundos
+        }, 200); // Ajusta el tiempo según tus necesidades
+    }
+
+    {/*** Fin ***/ }
+
+    const handleDoctor = async () => {
+
+        const formData = new FormData();
+        formData.append('nxs_db', nxsdb);
+        formData.append('Codigo_USR', codigo_USR);
+        formData.append('Codigo_ESP', selectedSpecialty);
+
+      //  setLoading(true);
+
+        try {
+            const response = await fetch('https://apimd.genomax.app/api/showDoctorsSpecialties', {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+               // setSpecialties(data.Especialidades);
+                //console.log('Consumo Exitoso')
+
+            } else {
+                // Si la respuesta tiene error, mostrar mensaje de error
+                console.log("error")
+            }
+        } catch (error) {
+            // Si hay un error en la solicitud, mostrar mensaje de error
+            console.error('Error al enviar la solicitud:', error);
+        } /* finally {
+            setLoading(false);
+        } */
+    };
+
 
     return (
         <div className="w-full h-full space-y-4 p-4 pr-0">
@@ -81,18 +130,24 @@ const CalendarMd = ({ nxsdb }) => {
                     <div className="flex items-center gap-2 pb-4">
                         <div className="w-[50%] flex flex-col relative">
                             <label htmlFor="">Especialidad</label>
-                            <input type="text" className="w-full text-sm text-gray-700 shadow-sm border-2 rounded-md focus:outline-none focus:bg-white focus:border-2 focus:border-blue-500 p-2" placeholder="Buscar por especialidad ..." onFocus={handleSpecialties} />
-                            {loading ? (
-                                <p>Cargando especialidades...</p>
-                            ) : (
-                                <div className="w-full h-20 absolute top-16 bg-white border shadow-md p-2 overflow-y-auto">
+                            <input type="text" className="w-full text-sm text-gray-700 shadow-sm border-2 rounded-md focus:outline-none focus:bg-white focus:border-2 focus:border-blue-500 p-2" placeholder="Buscar la especialidad ..." onFocus={() => { handleSpecialties(); setInputFocused(true); }} onBlur={handleDiley} />
+
+                            {inputFocused && !loading && specialties.length > 0 && (
+                                <div className="w-full h-44 absolute z-50 top-16 bg-white border shadow-md rounded-md overflow-y-auto">
                                     {specialties.map(specialty => (
                                         <div key={specialty.Codigo_ESP}>
-                                            <h3>{specialty.Nombre_ESP}</h3>
+                                            <h3 className="text-[13px] cursor-pointer hover:bg-gray-300 p-2 py-1.5" onClick={() => { handleSpecialtyClick(specialty.Codigo_ESP) }}>{specialty.Nombre_ESP}</h3>
                                         </div>
                                     ))}
                                 </div>
                             )}
+
+                            {loading && (
+                                <div className="w-full h-max absolute top-16 bg-white border rounded -md shadow-md p-2">
+                                    <p>Cargando especialidades...</p>
+                                </div>
+                            )}
+
                         </div>
                         <div className="w-[50%] flex flex-col">
                             <label htmlFor="">Doctor</label>
