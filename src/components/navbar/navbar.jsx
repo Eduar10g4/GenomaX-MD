@@ -33,6 +33,7 @@ const Navbar = () => {
         sessionStorage.removeItem('Nombre_USR');
         sessionStorage.removeItem('Email_USR');
         sessionStorage.removeItem('Activo_USR');
+        localStorage.removeItem('nxsdbParam');
         window.location.reload();
     };
 

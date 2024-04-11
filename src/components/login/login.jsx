@@ -24,26 +24,26 @@ const Login = () => {
 
   const navigate = useNavigate();
 
- /* useEffect(() => {
-    const plaintextPassword1 = '12345';
-    const plaintextPassword2 = '12345';
-  
-    // Genera los hashes para las contraseñas
-    const hash1 = bcrypt.hashSync(plaintextPassword1, 10);
-    const hash2 = bcrypt.hashSync(plaintextPassword2, 10);
-  
-    // Descomprime los hashes para obtener las contraseñas originales
-    const originalPassword1 = bcrypt.hashSync(hash1, 10);
-    const originalPassword2 = bcrypt.hashSync(hash2, 10);
-  
-    // Compara las contraseñas originales para ver si coinciden
-    const passwordsMatch = originalPassword1 === originalPassword2;
-  
-    // Imprime los resultados
-    console.log('Contraseña original 1:', originalPassword1);
-    console.log('Contraseña original 2:', originalPassword2);
-    console.log('¿Las contraseñas coinciden?', passwordsMatch);
-  }, []);*/
+  /* useEffect(() => {
+     const plaintextPassword1 = '12345';
+     const plaintextPassword2 = '12345';
+   
+     // Genera los hashes para las contraseñas
+     const hash1 = bcrypt.hashSync(plaintextPassword1, 10);
+     const hash2 = bcrypt.hashSync(plaintextPassword2, 10);
+   
+     // Descomprime los hashes para obtener las contraseñas originales
+     const originalPassword1 = bcrypt.hashSync(hash1, 10);
+     const originalPassword2 = bcrypt.hashSync(hash2, 10);
+   
+     // Compara las contraseñas originales para ver si coinciden
+     const passwordsMatch = originalPassword1 === originalPassword2;
+   
+     // Imprime los resultados
+     console.log('Contraseña original 1:', originalPassword1);
+     console.log('Contraseña original 2:', originalPassword2);
+     console.log('¿Las contraseñas coinciden?', passwordsMatch);
+   }, []);*/
 
   const validateEmail = (email) => {
     // Expresión regular para validar correos electrónicos
@@ -103,8 +103,6 @@ const Login = () => {
     const nxsdbParam = params.get('nxsdb');
     const codigoUSRParam = params.get('Codigo_USR');
 
-    setNxsdb(nxsdbParam);
-
     // Verificar si los parámetros están presentes y agregarlos al FormData
     if (nxsdbParam) {
       formData.append('nxsdb', nxsdbParam);
@@ -132,6 +130,9 @@ const Login = () => {
         sessionStorage.setItem('Email_USR', Email_USR);
         sessionStorage.setItem('Activo_USR', Activo_USR);
 
+        // Guardar el valor en localStorage
+        localStorage.setItem('nxsdbParam', nxsdbParam);
+
         Swal.fire({
           icon: 'success',
           title: 'Login exitoso',
@@ -156,10 +157,10 @@ const Login = () => {
         text: 'Ocurrió un error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.',
       });
     }
-   // setFormSubmitted(false)
+    // setFormSubmitted(false)
   };
 
-  console.log(nxsdb);
+  //  console.log(nxsdb);
 
   return (
     <>
@@ -272,7 +273,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-     <div className='invisible'><CalendarMd nxsdb={nxsdb} /></div>
+      <div className='invisible'><CalendarMd nxsdb={nxsdb} /></div>
     </>
 
   );
