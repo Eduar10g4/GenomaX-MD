@@ -16,7 +16,7 @@ const LayoutDashboard = ({ children }) => {
             <Sidebar />
             <div className="w-full h-full">
                 <Navbar />
-               <div className='w-full h-full overflow-y-auto'>{children}</div> 
+               <div className='w-full h-[90%] overflow-y-auto'>{children}</div> 
             </div>
         </div>
     )

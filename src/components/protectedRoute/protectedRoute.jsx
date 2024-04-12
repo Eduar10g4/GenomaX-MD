@@ -16,7 +16,7 @@ export function ProtectedRoute({ children }) {
     if(!user) return <Navigate to='/auth' />
     return(
       <>
-       <div className='w-full h-full overflow-y-hidden'>{children}</div> 
+       <div className='w-full overflow-y-hidden'>{children}</div> 
       </>
     ) 
 
