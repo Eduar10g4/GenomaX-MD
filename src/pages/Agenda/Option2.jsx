@@ -1,6 +1,15 @@
+import React, { useState, useEffect } from "react";
+import Citas from "../../components/misCitas/citas";
 
-const option2 = () => {
-  return <div className="title">Option2</div>;
+const MisCitas = () => {
+
+
+  return (
+    <>
+      <Citas />
+    </>
+  )
+
 };
 
-export default option2;
+export default MisCitas;

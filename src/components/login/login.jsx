@@ -123,12 +123,13 @@ const Login = () => {
         // setPassword('')
         const data = await response.json();
         console.log(data);
-        const { ID_USR, Nombre_USR, Email_USR, Activo_USR } = data.user;
+        const { ID_USR, Nombre_USR, Email_USR, Activo_USR, Codigo_USR } = data.user;
         sessionStorage.setItem('token', data.Tokens);
-        sessionStorage.setItem('ID_USR', ID_USR);
+        sessionStorage.setItem('Codigo_USR', Codigo_USR);
+       // sessionStorage.setItem('ID_USR', ID_USR);
         sessionStorage.setItem('Nombre_USR', Nombre_USR);
-        sessionStorage.setItem('Email_USR', Email_USR);
-        sessionStorage.setItem('Activo_USR', Activo_USR);
+        //sessionStorage.setItem('Email_USR', Email_USR);
+        //sessionStorage.setItem('Activo_USR', Activo_USR);
 
         // Guardar el valor en localStorage
         localStorage.setItem('nxsdbParam', nxsdbParam);

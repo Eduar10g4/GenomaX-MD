@@ -20,8 +20,8 @@ export const routes = [
           icon: <AiOutlineMenuUnfold />,
         },
         {
-          path: "/agenda/option2",
-          name: "Option2",
+          path: "/agenda/citas",
+          name: "Mis citas",
           icon: <AiOutlineMenuUnfold />,
         },
         {
