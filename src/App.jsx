@@ -5,7 +5,7 @@ import './App.css'
 import Login from './components/login/login';
 import Dashboard from './pages/Dashboard';
 import LayoutDashboard from './components/layout/layouthDashboard';
-import CalendarMd from './components/calendario/calendar';
+import CalendarMd from './components/CitasMedica/calendar';
 
 function App() {
 

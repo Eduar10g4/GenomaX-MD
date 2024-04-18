@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import Register from '../register/register';
 import EmailRecuperacion from '../modals/emailRecuperacion';
-import CalendarMd from '../calendario/calendar';
+import CalendarMd from '../CitasMedica/calendar';
 
 const Login = () => {
 
