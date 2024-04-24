@@ -4,7 +4,7 @@ import IMGX from "../../assets/img/favicon.ico"
 import SRC from "../../assets/Videos/video-login.mp4"
 import { FaChevronRight } from "react-icons/fa";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import bcrypt from 'bcryptjs-react';
+//import bcrypt from 'bcryptjs-react';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import Register from '../register/register';
