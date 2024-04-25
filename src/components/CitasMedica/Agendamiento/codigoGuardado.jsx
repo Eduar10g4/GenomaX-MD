@@ -281,7 +281,7 @@ const Agendamiento = () => {
             formData.append('fecha', fechaSeleccionada);
             // console.log(token);
 
-            // setIsLoading(true);
+           // setIsLoading(true);
             try {
                 const response = await fetch('https://apimd.genomax.app/api/ListarEspecialistasCabecera', {
                     method: 'POST',
@@ -299,7 +299,7 @@ const Agendamiento = () => {
                     setCodigosAGE(codigoAge);
                     // horasDisponiblesAge(codigoAge);
                     setListaCabecera(data.resultados)
-                    // listarHoras(fechaCalendar);
+                   // listarHoras(fechaCalendar);
 
                 } else {
                     // Si la respuesta tiene error, mostrar mensaje de error
@@ -361,7 +361,7 @@ const Agendamiento = () => {
                 setIsLoading(false);
             }
         };
-        if (fechaSeleccionada && codigoCheckbox) {
+        if(fechaSeleccionada && codigoCheckbox) {
             listarHoras();
         }
     }, [fechaSeleccionada, codigoCheckbox])
@@ -404,7 +404,7 @@ const Agendamiento = () => {
             formData.append('agendas', JSON.stringify(codigosAGE));
             // console.log(token);
 
-            // setIsLoading(true);
+           // setIsLoading(true);
             try {
                 const response = await fetch('https://apimd.genomax.app/api/obtenerHorasAgenda', {
                     method: 'POST',
@@ -431,34 +431,30 @@ const Agendamiento = () => {
                         }
                     };
 
-                    if (data && data.length > 0) {
-                        for (let i = 0; i < data.length; i++) {
-                            const detalles = data[i].detalles;
-                            if (detalles && detalles.length > 0) {
-                                for (let j = 0; j < detalles.length; j++) {
-                                    const codigoAGE = detalles[j].Codigo_AGE;
-                                    const horaAGE = detalles[j].Hora_AGE;
-                                    const estadoAGE = detalles[j].Estado_AGE;
-                                    const horaFormateada = formatearHora(horaAGE);
-                                    // Construir el id de la celda
-                                    const cellId = `hora-${horaFormateada}-especialista-${codigoAGE}`;
-                    
-                                    // Buscar la celda en la tabla
-                                    const cell = document.getElementById(cellId);
-                                    console.log("Celdas Correspondientes", cell);
-                    
-                                    // Verificar el valor de Estado_AGE y asignar la clase correspondiente
-                                    if (estadoAGE === "1") {
-                                        cell.classList.add("bg-gray-400");
-                                    } else if (estadoAGE === "0") {
-                                        cell.classList.add("bg-blue-500");
-                                    }
-                    
-                                    console.log("Codigo_AGE:", codigoAGE, "Hora_AGE:", horaFormateada, "Estado_AGE:", estadoAGE);
-                                }
+                    // Dentro del bloque de código donde procesas los detalles de la respuesta
+                    // Recorrer los detalles de la respuesta
+                    data.forEach(detalle => {
+                        // Verificar si el detalle tiene datos
+                        if (detalle.detalles && detalle.detalles.length > 0) {
+                            // Obtener el código de especialista y la hora
+                            const codigoAge = detalle.Codigo_AGE;
+                            const horaAge = formatearHora(detalle.Hora_AGE); // Formatear la hora sin segundos
+                            console.log("codigoAge", codigoAge)
+                            console.log("horaAge", horaAge);
+
+                            // Construir el id de la celda
+                            const cellId = `hora-${horaAge}-especialista-${codigoAge}`;
+
+                            // Buscar la celda en la tabla
+                            const cell = document.getElementById(cellId);
+                            console.log(cell);
+
+                            // Si se encontró la celda, agregar las clases de bloqueo
+                            if (cell) {
+                                cell.classList.add('bg-gray-500', 'cursor-not-allowed');
                             }
                         }
-                    }                    
+                    });
 
                 } else {
                     // Si la respuesta tiene error, mostrar mensaje de error
@@ -472,7 +468,7 @@ const Agendamiento = () => {
             }*/
         };
 
-        if (codigosAGE && horaMin && horaMax) {
+        if (codigosAGE && horaMin && horaMax ) {
             horasDisponiblesAge();
         }
 
