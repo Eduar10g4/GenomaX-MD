@@ -39,7 +39,14 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="bg-sky-800 shadow-b-md shadow-gray-800 p-4 pl-20 py-3">
+            <nav className="shadow-gray-800 p-4 pl-20 py-1.5" style={{
+                background: "rgba(255, 255, 255, 0.25)",
+                boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+                WebkitBackdropFilter: "blur(9.5px)",
+                backdropFilter: "blur(9.5px)",
+               // borderRadius: "10px",
+                //border: "1px solid rgba(255, 255, 255, 0.18)"
+            }}>
                 <div className="flex justify-between items-center">
                     <div className="flex justify-center items-center text-white text-md relative">
                         <button onClick={() => setOpenMas(!openMas)}><FaPlusCircle /></button>
@@ -59,7 +66,7 @@ const Navbar = () => {
                     </div>
                     <div className=" flex justify-center items-center">
                         <div className="flex justify-end items-center relative">
-                            <button className="bg-white rounded-full shadow-xl border boerd-gray-300 w-10 h-10 flex items-center justify-center" onClick={() => setOpenProfile(!openProfile)}>
+                            <button className="bg-white rounded-full w-10 h-10 flex items-center justify-center" onClick={() => setOpenProfile(!openProfile)}>
                                 {inicialesNombre}
                             </button>
                             {openProfile && (

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 //import Navbar from '../navbar/Navbar';
 //import Wizard from '../wizard/Wizard';
-//import fondo from '../assets/fondo.png';
+import fondo from '../../assets/img/fondo.png';
 //import medical from '../assets/Medical_3.jpeg'
 import DashboardMd from '../../dashboard';
 import Sidebar from '../sidebar/sidebar';
@@ -12,7 +12,7 @@ const LayoutDashboard = ({ children }) => {
     // const [isWizard, setIsWizard] = useState(true)
 
     return (
-        <div className="w-full h-screen flex">
+        <div className="w-full h-screen flex bg-cover" style={{ backgroundImage: `url(${fondo})` }}>
             <Sidebar />
             <div className="w-full h-full">
                 <Navbar />

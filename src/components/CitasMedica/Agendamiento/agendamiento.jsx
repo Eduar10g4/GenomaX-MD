@@ -442,23 +442,23 @@ const Agendamiento = () => {
                                     const horaFormateada = formatearHora(horaAGE);
                                     // Construir el id de la celda
                                     const cellId = `hora-${horaFormateada}-especialista-${codigoAGE}`;
-                    
+
                                     // Buscar la celda en la tabla
                                     const cell = document.getElementById(cellId);
                                     console.log("Celdas Correspondientes", cell);
-                    
+
                                     // Verificar el valor de Estado_AGE y asignar la clase correspondiente
                                     if (estadoAGE === "1") {
                                         cell.classList.add("bg-gray-400");
                                     } else if (estadoAGE === "0") {
                                         cell.classList.add("bg-blue-500");
                                     }
-                    
+
                                     console.log("Codigo_AGE:", codigoAGE, "Hora_AGE:", horaFormateada, "Estado_AGE:", estadoAGE);
                                 }
                             }
                         }
-                    }                    
+                    }
 
                 } else {
                     // Si la respuesta tiene error, mostrar mensaje de error
@@ -518,14 +518,73 @@ const Agendamiento = () => {
 
     return (
         <>
-            <div className="h-full border rounded-md gap-5 m-2 mr-0">
-                <div className="w-full h-max bg-sky-700 flex items-center justify-between gap-1 text-white text-md font-semibold rounded-t-md p-3">
-                    <div className="flex items-center gap-1">
+            <div className="h-full rounded-md gap-5 m-2">
+                <div className="w-full h-max flex items-center justify-between gap-1 text-white text-md font-semibold rounded-md p-3" style={{
+                    background: "rgba(255, 255, 255, 0.25)",
+                    boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+                    WebkitBackdropFilter: "blur(9.5px)",
+                    backdropFilter: "blur(9.5px)",
+                    borderRadius: "10px",
+                    border: "1px solid rgba(255, 255, 255, 0.18)"
+                }}>
+                    <div className="flex items-center text-lg gap-1">
                         <BiCalendarWeek />
                         <h1 className="">Agendamiento</h1>
                     </div>
                 </div>
-                <div className="h-full lg:h-[85%] block lg:flex gap-5 p-2">
+                <div className="h-full lg:h-[85%] block lg:flex gap-5 pt-2">
+                    <div className="max-w-[320px] h-max border rounded-md shadow-md p-4" style={{
+                        background: "rgba(255, 255, 255, 0.25)",
+                        boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+                        WebkitBackdropFilter: "blur(9.5px)",
+                        backdropFilter: "blur(9.5px)",
+                        borderRadius: "10px",
+                        border: "1px solid rgba(255, 255, 255, 0.18)"
+                    }}>
+                        <h1 className="bg-sky-700 text-center text-white text-sm rounded-md rounded-b-none py-1.5 px-2">Seleccione el dia deseado</h1>
+                        <Calendar onChange={handleFechaSeleccionada} value={fechaActual} minDate={new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1)} maxDate={fechaMax} />
+                        <div className="border rounded-sm mt-4 p-2" style={{
+                            background: "rgba(255, 255, 255, 0.25)",
+                            boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+                            WebkitBackdropFilter: "blur(9.5px)",
+                            backdropFilter: "blur(9.5px)",
+                            borderRadius: "10px",
+                            border: "1px solid rgba(255, 255, 255, 0.18)",
+                        }} >
+                            <p className="text-sm text-white">Areas</p>
+                            {areas.length === 0 ? (
+                                <p className="text-sm text-red-500">Sin áreas registradas ...</p>
+                            ) : (
+                                areas.map((area, index) => (
+                                    <div key={index} className="flex items-center mt-2">
+                                        <input type="checkbox" id={`area-${index}`} className="form-checkbox h-4 w-4 text-green-500" defaultChecked={true} />
+                                        <label htmlFor={`area-${index}`} className="text-sm ml-2 text-white">{area.Nombre_ARE}</label>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                        <div className="mt-4">
+                            <label htmlFor="tipoAtencion" className="block text-sm font-medium text-gray-700 mb-1">Tipo de Atención</label>
+                            <select
+                                id="tipoAtencion"
+                                name="tipoAtencion"
+                                //  value={value}
+                                // onChange={onChange}
+                                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            >
+                                {tipoAtencion.length === 0 ? (
+                                    <option value="">Sin datos ...</option>
+                                ) : (
+                                    tipoAtencion.map((campo, index) => (
+                                        <option key={index} value={campo.Codigo_TAH}>{campo.Nombre_TAH}</option>
+                                    ))
+                                )}
+                            </select>
+                            {/**  {numeros.map((objeto, index) => (
+                                <p key={index}>{objeto.numero}</p>
+                            ))}  */}
+                        </div>
+                    </div>
                     <div className="w-[75%] h-[90%] lg:h-full p-2">
                         <div className="w-full flex items-center justify-center h-max border p-2">
                             <h1> AGENDA DEL DÍA {fechaSeleccionada} </h1>
@@ -563,44 +622,6 @@ const Agendamiento = () => {
                                     )}
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                    <div className="w-[25%] max-w-[30%] h-max border rounded-md shadow-md p-4">
-                        <h1 className="bg-sky-700 text-center text-white text-sm rounded-md rounded-b-none py-1.5 px-2">Seleccione el dia deseado</h1>
-                        <Calendar onChange={handleFechaSeleccionada} value={fechaActual} minDate={new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1)} maxDate={fechaMax} />
-                        <div className="border rounded-sm mt-4 p-2">
-                            <p className="text-sm">Areas</p>
-                            {areas.length === 0 ? (
-                                <p className="text-sm text-red-500">Sin áreas registradas ...</p>
-                            ) : (
-                                areas.map((area, index) => (
-                                    <div key={index} className="flex items-center mt-2">
-                                        <input type="checkbox" id={`area-${index}`} className="form-checkbox h-4 w-4 text-green-500" defaultChecked={true} />
-                                        <label htmlFor={`area-${index}`} className="text-sm ml-2">{area.Nombre_ARE}</label>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                        <div className="mt-4">
-                            <label htmlFor="tipoAtencion" className="block text-sm font-medium text-gray-700 mb-1">Tipo de Atención</label>
-                            <select
-                                id="tipoAtencion"
-                                name="tipoAtencion"
-                                //  value={value}
-                                // onChange={onChange}
-                                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            >
-                                {tipoAtencion.length === 0 ? (
-                                    <option value="">Sin datos ...</option>
-                                ) : (
-                                    tipoAtencion.map((campo, index) => (
-                                        <option key={index} value={campo.Codigo_TAH}>{campo.Nombre_TAH}</option>
-                                    ))
-                                )}
-                            </select>
-                            {/**  {numeros.map((objeto, index) => (
-                                <p key={index}>{objeto.numero}</p>
-                            ))}  */}
                         </div>
                     </div>
                 </div>
