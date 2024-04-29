@@ -14,9 +14,9 @@ const LayoutDashboard = ({ children }) => {
     return (
         <div className="w-full h-screen flex bg-cover" style={{ backgroundImage: `url(${fondo})` }}>
             <Sidebar />
-            <div className="w-full h-full">
-                <Navbar />
-               <div className='w-full h-[92%] overflow-y-auto'>{children}</div> 
+            <div className="w-full h-full relative">
+              <div className='w-full absolute z-50'><Navbar /></div>
+               <div className='w-full mt-[60px] h-[85%]'>{children}</div> 
             </div>
         </div>
     )

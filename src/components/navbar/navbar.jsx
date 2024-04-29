@@ -51,7 +51,7 @@ const Navbar = () => {
                     <div className="flex justify-center items-center text-white text-md relative">
                         <button onClick={() => setOpenMas(!openMas)}><FaPlusCircle /></button>
                         {openMas && (
-                            <div className="w-max absolute bg-white rounded-md z-50 border border-gray-200 shadow-lg top-10">
+                            <div className="w-max absolute bg-white rounded-md z-50 border border-gray-200 shadow-lg top-[34px]">
                                 <ul>
                                     {
                                         optionBtnsData.map((data, index) => (
