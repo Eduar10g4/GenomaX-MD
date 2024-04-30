@@ -348,14 +348,14 @@ const HistoriaClinica = () => {
             </div>
 
             <div className="w-full">
-              <div className="border h-max flex gap-3 items-center bg-opacity-25 backdrop-filter backdrop-blur-md bg-white bg-opacity-25 shadow-lg rounded-lg border border-gray-100 border-opacity-25 p-2 mb-2">
+              <div className="border h-max flex gap-3 items-center bg-opacity-25 backdrop-filter backdrop-blur-md bg-white shadow-lg rounded-lg border border-gray-100 border-opacity-25 p-2 mb-2">
                 <div class="flex-1 w-full">
-                  <label for="tipo_atencion" class="block text-sm font-medium text-white">Fecha</label>
-                  <input type="date" value={currentDate} onChange={handleDateChange} className="flex-1 mt-1 pl-2 shadow-sm block w-full min-w-0 rounded-md sm:text-sm py-2" />
+                  <label for="fecha" class="block text-sm font-medium text-white">Fecha</label>
+                  <input type="date" name="fecha" id="fecha" value={currentDate} onChange={handleDateChange} className="flex-1 mt-1 pl-2 shadow-sm block w-full min-w-0 rounded-md sm:text-sm py-2" />
                 </div>
                 <div class="flex-1 w-full">
-                  <label for="tipo_atencion" class="block text-sm font-medium text-white">Hora</label>
-                  <input type="time" value={currentTime} className="flex-1 mt-1 pl-2 shadow-sm block w-full min-w-0 rounded-md sm:text-sm py-2" />
+                  <label for="hora" class="block text-sm font-medium text-white">Hora</label>
+                  <input type="time" name="hora" id="hora" value={currentTime} className="flex-1 mt-1 pl-2 shadow-sm block w-full min-w-0 rounded-md sm:text-sm py-2" />
                 </div>
                 <div class="flex-1 w-full">
                   <label for="tipo_atencion" class="block text-sm font-medium text-white">Tipo Atención</label>
@@ -372,17 +372,17 @@ const HistoriaClinica = () => {
                   <label className="flex gap-0.5 text-gray-200"><ImPencil />{hcFolio ? hcFolio : "H.C"} - {formDataHc.paciente} - {formDataHc.nombre}</label>
                 </div>
                 <div className="w-full h-max bg-opacity-65 backdrop-filter backdrop-blur-md bg-white bg-opacity-25 shadow-lg rounded-lg border border-gray-100 border-opacity-25 p-2">
-               
-                {tabActiva !== null ? (
-          <div className={`contenido-item active`}>
-            <p>{tiposAtencion[tabActiva].contenido}</p>
-          </div>
-        ) : (
-          <div className={`contenido-item`}>
-            <p>Seleccione el formato de historia clínica a diligenciar en el botón [+ Nuevo Folio]</p>
-          </div>
-        )}
-                 
+
+                  {tabActiva !== null ? (
+                    <div className={`contenido-item active`}>
+                      <p>{tiposAtencion[tabActiva].contenido}</p>
+                    </div>
+                  ) : (
+                    <div className={`contenido-item`}>
+                      <p>Seleccione el formato de historia clínica a diligenciar en el botón [+ Nuevo Folio]</p>
+                    </div>
+                  )}
+
                 </div>
               </div>
             </div>

@@ -128,7 +128,7 @@ const PacienteHc = ({ toggleModalCrearPaciente }) => {
                                 <label>Paciente</label>
                             </div>
                             <div className="bg-gray-100 w-full h-[50%] overflow-y-auto md:h-max shadow-gray-400 border-[1px] p-8 px-5 pr-8 rounded-lg shadow-md">
-                                <div className="w-full " >
+                                <div className="w-full" >
                                     <div className="flex gap-2 flex-col lg:flex-row w-full items-center space-x-1 space-y-2 lg:space-y-0">
 
                                         <div className="flex-1 w-full">

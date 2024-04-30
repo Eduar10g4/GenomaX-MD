@@ -514,7 +514,7 @@ const Agendamiento = () => {
             return dia;
         }
     };
-
+    
 
     return (
         <>
@@ -532,7 +532,7 @@ const Agendamiento = () => {
                         <h1 className="">Agendamiento</h1>
                     </div>
                 </div>
-                <div className="h-full lg:h-[85%] block lg:flex gap-5 pt-2">
+                <div className="h-full lg:h-[90%] block lg:flex gap-5 pt-2">
                     <div className="max-w-[320px] h-max border rounded-md shadow-md p-4" style={{
                         background: "rgba(255, 255, 255, 0.25)",
                         boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
@@ -543,55 +543,50 @@ const Agendamiento = () => {
                     }}>
                         <h1 className="bg-sky-700 text-center text-white text-sm rounded-md rounded-b-none py-1.5 px-2">Seleccione el dia deseado</h1>
                         <Calendar onChange={handleFechaSeleccionada} value={fechaActual} minDate={new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1)} maxDate={fechaMax} />
-                        <div className="border rounded-sm mt-4 p-2" style={{
-                            background: "rgba(255, 255, 255, 0.25)",
-                            boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
-                            WebkitBackdropFilter: "blur(9.5px)",
-                            backdropFilter: "blur(9.5px)",
-                            borderRadius: "10px",
-                            border: "1px solid rgba(255, 255, 255, 0.18)",
-                        }} >
-                            <p className="text-sm text-white">Areas</p>
-                            {areas.length === 0 ? (
-                                <p className="text-sm text-red-500">Sin áreas registradas ...</p>
-                            ) : (
-                                areas.map((area, index) => (
-                                    <div key={index} className="flex items-center mt-2">
-                                        <input type="checkbox" id={`area-${index}`} className="form-checkbox h-4 w-4 text-green-500" defaultChecked={true} />
-                                        <label htmlFor={`area-${index}`} className="text-sm ml-2 text-white">{area.Nombre_ARE}</label>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                        <div className="mt-4">
-                            <label htmlFor="tipoAtencion" className="block text-sm font-medium text-gray-700 mb-1">Tipo de Atención</label>
-                            <select
-                                id="tipoAtencion"
-                                name="tipoAtencion"
-                                //  value={value}
-                                // onChange={onChange}
-                                className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            >
-                                {tipoAtencion.length === 0 ? (
-                                    <option value="">Sin datos ...</option>
+                        <div className="bg-opacity-25 backdrop-filter backdrop-blur-md bg-white bg-opacity-25 shadow-lg rounded-lg border border-gray-100 border-opacity-25 p-2 mt-4">
+                            <div className="" >
+                                <p className="text-sm text-white font-semibold">Areas</p>
+                                {areas.length === 0 ? (
+                                    <p className="text-sm text-red-500">Sin áreas registradas ...</p>
                                 ) : (
-                                    tipoAtencion.map((campo, index) => (
-                                        <option key={index} value={campo.Codigo_TAH}>{campo.Nombre_TAH}</option>
+                                    areas.map((area, index) => (
+                                        <div key={index} className="flex items-center mt-2">
+                                            <input type="checkbox" id={`area-${index}`} className="form-checkbox h-4 w-4 text-green-500" defaultChecked={true} />
+                                            <label htmlFor={`area-${index}`} className="text-sm ml-2 text-white">{area.Nombre_ARE}</label>
+                                        </div>
                                     ))
                                 )}
-                            </select>
-                            {/**  {numeros.map((objeto, index) => (
+                            </div>
+                            <div className="mt-4">
+                                <label htmlFor="tipoAtencion" className="block text-sm text-white font-medium text-gray-700 mb-1">Tipo de Atención</label>
+                                <select
+                                    id="tipoAtencion"
+                                    name="tipoAtencion"
+                                    //  value={value}
+                                    // onChange={onChange}
+                                    className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                >
+                                    {tipoAtencion.length === 0 ? (
+                                        <option value="">Sin datos ...</option>
+                                    ) : (
+                                        tipoAtencion.map((campo, index) => (
+                                            <option key={index} value={campo.Codigo_TAH}>{campo.Nombre_TAH}</option>
+                                        ))
+                                    )}
+                                </select>
+                                {/**  {numeros.map((objeto, index) => (
                                 <p key={index}>{objeto.numero}</p>
                             ))}  */}
+                            </div>
                         </div>
                     </div>
-                    <div className="w-[75%] h-[90%] lg:h-full p-2">
-                        <div className="w-full flex items-center justify-center h-max border p-2">
-                            <h1> AGENDA DEL DÍA {fechaSeleccionada} </h1>
+                    <div className="w-[75%] h-full lg:h-full">
+                        <div className="w-full h-max flex items-center justify-center border p-2 bg-opacity-25 backdrop-filter backdrop-blur-md bg-white shadow-lg rounded-lg border border-gray-100 border-opacity-25">
+                            <h1 className="text-white"> AGENDA DEL DÍA {fechaSeleccionada} </h1>
                         </div>
-                        {/**  <CalendarMeet fechaSeleccionada={fechaSeleccionada} /> */}
+                        <CalendarMeet  />
                         {/** <table></table> */}
-                        <div className="w-full h-full overflow-auto relative border sm:rounded-lg">
+                        {/**  <div className="w-full h-full overflow-auto relative border sm:rounded-lg">
                             <table className="min-w-full text-sm text-gray-500 text-center">
                                 <thead className="text-xs text-gray-100 uppercase bg-sky-700">
                                     <tr>
@@ -613,7 +608,7 @@ const Agendamiento = () => {
                                                     <td key={index} className="border px-4 py-1">{hora}</td>
                                                     {listaCabecera.map((resultado, idx) => (
                                                         <td key={idx} id={`hora-${hora}-especialista-${resultado.Codigo_AGE}`} className="border px-4 py-2">
-                                                            {/* Aquí puedes mostrar cualquier contenido relacionado con el nombre */}
+                                                            {/* Aquí puedes mostrar cualquier contenido relacionado con el nombre 
                                                         </td>
                                                     ))}
                                                 </tr>
@@ -621,8 +616,8 @@ const Agendamiento = () => {
                                         </>
                                     )}
                                 </tbody>
-                            </table>
-                        </div>
+                            </table> 
+                        </div> */}
                     </div>
                 </div>
             </div>
