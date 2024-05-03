@@ -6,6 +6,7 @@ import Login from './components/login/login';
 import Dashboard from './pages/Dashboard';
 import LayoutDashboard from './components/layout/layouthDashboard';
 import CalendarMd from './components/CitasMedica/calendar';
+import Agendamiento from './components/CitasMedica/Agendamiento/agendamiento';
 
 function App() {
 

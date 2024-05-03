@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { createRoot } from 'react-dom/client';
 import { BiCalendarWeek } from "react-icons/bi";
 import { IoTime } from "react-icons/io5";
+import { IoIosAdd } from "react-icons/io";
+import { FaWpforms, FaSearch } from "react-icons/fa";
+import { MdPeopleAlt } from "react-icons/md";
+import fondo from "../../../assets/img/fondo.png"
 import Calendar from "react-calendar";
+import Draggable from "react-draggable";
 import 'react-calendar/dist/Calendar.css';
 import './styleCalendar.css'
 import CalendarMeet from "../calendarMeet/calendarMeet";
@@ -27,6 +33,30 @@ const Agendamiento = () => {
     const [listaCabecera, setListaCabecera] = useState([]);
     const [horas, setHoras] = useState([]);
     const [codigosAGE, setCodigosAGE] = useState([]);
+    const [mostrarModal, setMostrarModal] = useState(false);
+    const [mostrarIcono, setMostrarIcono] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+
+     // Datos Cita
+     const [formDataCita, setFormDataCita] = useState({
+        fechaAgenda: '',
+        horaAgenda: '',
+        servicio: '',
+        nombreServicio: '',
+        area: '',
+        tipoConsulta: '',
+        fechaDeseada: '',
+        tipoAtencion: '',
+        profesional: '',
+        paciente: '',
+        nombrePaciente: '',
+        nota: ''
+    });
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setFormDataCita({ ...formDataCita, [name]: value });
+    };
 
 
     // Llamar a la función para generar los números cuando el componente se monta
@@ -348,6 +378,7 @@ const Agendamiento = () => {
                     //  horasDisponiblesAge(fechaCalendar, horamin, horamax);
                     const horas = generarHoras(horamin, horamax);
                     setHoras(horas);
+                    console.log(horas);
 
 
                 } else {
@@ -386,6 +417,25 @@ const Agendamiento = () => {
         const horaActual = new Date(0, 0, 0, partes[0], partes[1]);
         horaActual.setMinutes(horaActual.getMinutes() + minutos);
         return horaActual.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    };
+
+    const toggleModal = () => {
+        setMostrarModal(!mostrarModal)
+    }
+
+    const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+
+    const handleCellClick = (event) => {
+        const cell = event.target.closest('td');
+        if (cell) {
+            const cellRect = cell.getBoundingClientRect();
+            setModalPosition({
+                top: cellRect.top - 10, // Ajusta según sea necesario
+                left: cellRect.left - 10, // Ajusta según sea necesario
+            });
+            setMostrarModal(true);
+        }
+        console.log("habla")
     };
 
     {/*** Funcion para listar las horas disponbles en la tabla***/ }
@@ -432,29 +482,63 @@ const Agendamiento = () => {
                     };
 
                     if (data && data.length > 0) {
+                        const horasConIcono = {}; // Objeto para almacenar las horas con icono
+
                         for (let i = 0; i < data.length; i++) {
+                            const tiempo = parseInt(data[i].tiempo); // Convertir tiempo a entero
                             const detalles = data[i].detalles;
                             if (detalles && detalles.length > 0) {
                                 for (let j = 0; j < detalles.length; j++) {
                                     const codigoAGE = detalles[j].Codigo_AGE;
                                     const horaAGE = detalles[j].Hora_AGE;
                                     const estadoAGE = detalles[j].Estado_AGE;
-                                    const horaFormateada = formatearHora(horaAGE);
-                                    // Construir el id de la celda
-                                    const cellId = `hora-${horaFormateada}-especialista-${codigoAGE}`;
+                                    let horaFormateada = formatearHora(horaAGE);
 
-                                    // Buscar la celda en la tabla
-                                    const cell = document.getElementById(cellId);
-                                    console.log("Celdas Correspondientes", cell);
+                                    // Calcular la hora final sumando el tiempo al inicio
+                                    const [horaInicio, minInicio] = horaFormateada.split(":").map(Number);
+                                    let horaFinal = horaInicio * 60 + minInicio + tiempo;
+                                    const horaFinalFormato = `${Math.floor(horaFinal / 60).toString().padStart(2, "0")}:${(horaFinal % 60).toString().padStart(2, "0")}`;
 
-                                    // Verificar el valor de Estado_AGE y asignar la clase correspondiente
-                                    if (estadoAGE === "1") {
-                                        cell.classList.add("bg-gray-400");
-                                    } else if (estadoAGE === "0") {
-                                        cell.classList.add("bg-blue-500");
+                                    // Obtener todas las horas dentro del rango entre horaFormateada y horaFinalFormato
+                                    const horasEnRango = horas.filter(hora => hora >= horaFormateada && hora < horaFinalFormato);
+                                    //Imprimer la hora de inicio y la final
+                                    console.log("horaInicio", horaFormateada);
+
+                                    // Imprimir todas las horas en el rango
+                                    //   console.log("Horas en el rango:", horasEnRango.join(", "));
+                                    // Aplicar clases a las celdas según el rango de tiempo
+                                    for (const horaEnRango of horasEnRango) {
+                                        const cellId = `hora-${horaEnRango}-especialista-${codigoAGE}`;
+                                        const cell = document.getElementById(cellId);
+                                        console.log(cell)
+                                        if (cell) {
+                                            if (estadoAGE === "1") {
+                                                cell.classList.add("bg-gray-400");
+                                            } else if (estadoAGE === "0") {
+                                                cell.classList.add("bg-blue-500", "border-none", "cursor-pointer");
+                                                // Agregar evento onClick para mostrar el mensaje
+                                                cell.addEventListener("click", (event) => {
+                                                    if (horaEnRango === horaFormateada) {
+                                                        handleCellClick(event);
+                                                    }
+
+                                                });
+
+                                                // console.log("mensaje modal", mostrarModal)
+
+                                                // Verificar si ya se ha agregado el icono en esta hora
+                                                /* if (!horasConIcono[horaFormateada]) {
+                                                     if (horaEnRango === horaFormateada) {
+                                                         const icon = document.createElement("span");
+                                                         createRoot(icon).render(<IoIosAdd className="text-lg text-white" />);
+                                                         cell.appendChild(icon);
+                                                         // Marcar la hora actual como que ya se ha agregado el icono
+                                                         // setIconosAgregados(true);
+                                                     }
+                                                 }*/
+                                            }
+                                        }
                                     }
-
-                                    console.log("Codigo_AGE:", codigoAGE, "Hora_AGE:", horaFormateada, "Estado_AGE:", estadoAGE);
                                 }
                             }
                         }
@@ -514,11 +598,10 @@ const Agendamiento = () => {
             return dia;
         }
     };
-    
 
     return (
         <>
-            <div className="h-full rounded-md gap-5 m-2">
+            <div className="h-full rounded-md gap-5 m-2" style={{ backgroundImage: `url(${fondo})` }}>
                 <div className="w-full h-max flex items-center justify-between gap-1 text-white text-md font-semibold rounded-md p-3" style={{
                     background: "rgba(255, 255, 255, 0.25)",
                     boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
@@ -532,8 +615,8 @@ const Agendamiento = () => {
                         <h1 className="">Agendamiento</h1>
                     </div>
                 </div>
-                <div className="h-full lg:h-[90%] block lg:flex gap-5 pt-2">
-                    <div className="max-w-[320px] h-max border rounded-md shadow-md p-4" style={{
+                <div className="h-full w-full overflow-y-auto block lg:flex gap-2 pt-2">
+                    <div className="w-full lg:max-w-[320px] h-max border rounded-md shadow-md p-4 mb-2 lg:mb-0" style={{
                         background: "rgba(255, 255, 255, 0.25)",
                         boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
                         WebkitBackdropFilter: "blur(9.5px)",
@@ -580,19 +663,19 @@ const Agendamiento = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="w-[75%] h-full lg:h-full">
-                        <div className="w-full h-max flex items-center justify-center border p-2 bg-opacity-25 backdrop-filter backdrop-blur-md bg-white shadow-lg rounded-lg border border-gray-100 border-opacity-25">
+                    <div className="w-full lg:w-[75%] h-full overflow-x-auto">
+                        <div className="w-full h-max flex items-center justify-center border p-2 bg-opacity-25 backdrop-filter backdrop-blur-md bg-white shadow-lg rounded-lg border border-gray-100 border-opacity-25 mb-2">
                             <h1 className="text-white"> AGENDA DEL DÍA {fechaSeleccionada} </h1>
                         </div>
-                        <CalendarMeet  />
+                        {/**  <CalendarMeet />  */}
                         {/** <table></table> */}
-                        {/**  <div className="w-full h-full overflow-auto relative border sm:rounded-lg">
+                        <div className="w-full h-max overflow-auto relative sm:rounded-lg bg-opacity-25 backdrop-filter backdrop-blur-md bg-white bg-opacity-25 shadow-lg rounded-lg border border-gray-100 border-opacity-25">
                             <table className="min-w-full text-sm text-gray-500 text-center">
                                 <thead className="text-xs text-gray-100 uppercase bg-sky-700">
                                     <tr>
                                         <th className=""><p className="w-full flex justify-center items-center text-center text-[14px]"><IoTime /></p></th>
                                         {listaCabecera.map((resultado, index) => (
-                                            <th key={index} id={`especialista-${resultado.Codigo_AGE}`} className="border px-4 py-2"><p className="">{resultado.nombre_completo}</p></th>
+                                            <th key={index} id={`especialista-${resultado.Codigo_AGE}`} className="border px-4 py-2"><p className="text-[11px]">{resultado.nombre_completo}</p></th>
                                         ))}
                                     </tr>
                                 </thead>
@@ -605,10 +688,10 @@ const Agendamiento = () => {
                                         <>
                                             {horas.map((hora, index) => (
                                                 <tr key={index}>
-                                                    <td key={index} className="border px-4 py-1">{hora}</td>
+                                                    <td key={index} className="border px-1 py-0.5 text-[12px] text-white">{hora}</td>
                                                     {listaCabecera.map((resultado, idx) => (
-                                                        <td key={idx} id={`hora-${hora}-especialista-${resultado.Codigo_AGE}`} className="border px-4 py-2">
-                                                            {/* Aquí puedes mostrar cualquier contenido relacionado con el nombre 
+                                                        <td key={idx} id={`hora-${hora}-especialista-${resultado.Codigo_AGE}`} className="border px-4 py-2 cursor-not-allowed">
+                                                            {/* Aquí puedes mostrar cualquier contenido relacionado con el nombre */}
                                                         </td>
                                                     ))}
                                                 </tr>
@@ -616,11 +699,239 @@ const Agendamiento = () => {
                                         </>
                                     )}
                                 </tbody>
-                            </table> 
-                        </div> */}
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+            {mostrarModal && (
+                <div id="modal" className="absolute bg-white border rounded-md" style={{ top: modalPosition.top, left: modalPosition.left }}>
+                    <div className="flex justify-end">
+                        <button onClick={() => setMostrarModal(false)} type="button" className="bg-transparent mb-1 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm ml-auto inline-flex items-center relative top-1 right-1 dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="defaultModal">
+                            <svg aria-hidden="true" className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path>
+                            </svg>
+                            <span className="sr-only">Close modal</span>
+                        </button>
+                    </div>
+                    <div className="px-4 hover:bg-gray-300 hover:rounded-sm cursor-pointer" onClick={() => {setMostrarModal(false); setIsOpen(true)}}>
+                        <p>Programar nueva cita</p>
+                    </div>
+                </div>
+            )}
+            {isOpen && (
+                <Draggable cancel=".cancel-drag">
+                    <div id="defaultModal" tabindex="-1" aria-hidden="true" className="fixed inset-0 flex flex-col gap-4 items-center justify-center z-50 px-20">
+                        <div class="relative  h-max shadow-md">
+
+                            <div class="h-full bg-white rounded-md shadow overflow-y-auto">
+                                <div className="flex w-full items-center justify-between bg-sky-700 text-white cursor-pointer rounded-t-md p-2 px-4">
+                                    <div className="flex items-center gap-1">
+                                        <button className="text-xl">
+                                            <FaWpforms />
+                                        </button>
+                                        <p>Nueva Cita</p>
+                                    </div>
+                                    <button onClick={() => setIsOpen(false)} type="button" className="bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="defaultModal">
+                                        <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
+                                        <span className="sr-only">Close modal</span>
+                                    </button>
+                                </div>
+                                <div className="cancel-drag p-5 pb-2">
+                                    <div className="bg-gray-100 w-full h-[50%] overflow-y-auto md:h-max shadow-gray-400 border-[1px] p-4 px-5 pr-8 rounded-lg shadow-md">
+                                        <div className="w-full space-y-6" >
+                                            <div className="flex gap-2 flex-col lg:flex-row w-full items-center space-x-1 space-y-2 lg:space-y-0">
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="fechaAgenda" className="block text-sm font-medium text-sky-700 mb-1">Fecha Agenda</label>
+                                                    <input
+                                                        type="date"
+                                                        name="fechaAgenda"
+                                                        id="fechaAgenda"
+                                                        value={formDataCita.fechaAgenda}
+                                                        onChange={handleInputChange}
+                                                        // onKeyDown={handleEnterKeyPress}
+                                                        className="flex-1 px-2 bg-gray-300 block w-full min-w-0 rounded-md sm:text-sm py-2"
+                                                        disabled
+                                                    />
+                                                </div>
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="horaAgenda" className="block text-sm font-medium text-sky-700 mb-1">Hora Agenda</label>
+                                                    <select
+                                                        value={formDataCita.horaAgenda}
+                                                        onChange={handleInputChange}
+                                                        name="horaAgenda"
+                                                        id="horaAgenda"
+                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2"
+                                                    >
+                                                        {/* Aquí puedes agregar las opciones del select */}
+                                                        <option value="8:00">8:00 AM</option>
+                                                        <option value="9:00">9:00 AM</option>
+                                                        <option value="10:00">10:00 AM</option>
+                                                        {/* Agrega más opciones según sea necesario */}
+                                                    </select>
+                                                </div>
+
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="servicio" className="block text-sm font-medium text-sky-700 mb-1">Servicio</label>
+                                                    <div className="mt-1 flex rounded-md shadow-sm">
+                                                        <input
+                                                            value={formDataCita.servicio}
+                                                            onChange={handleInputChange}
+                                                            type="text"
+                                                            name="servicio"
+                                                            id="servicio"
+                                                            className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            //onClick={toggleModalFiltroIngreso}
+                                                            className="-ml-px shadow-md bg-sky-700 text-teal-50 relative inline-flex items-center space-x-2 px-4 py-2 border border-sky-700 text-sm font-medium rounded-r-md  hover:bg-sky-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                                                        >
+                                                            <FaSearch />
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="nombreServicio" className="block text-sm font-medium text-sky-700 mb-1">Nombre Servicio</label>
+                                                    <input
+                                                        value={formDataCita.nombreServicio}
+                                                        onChange={handleInputChange}
+                                                        type="text"
+                                                        name="nombreServicio"
+                                                        id="nombreServicio"
+                                                        className="flex-1 px-2 bg-gray-300 block w-max min-w-0 rounded-md sm:text-sm py-2 "
+                                                        disabled
+                                                    />
+                                                </div>
+
+                                            </div>
+                                            <div className="flex gap-2 flex-col lg:flex-row w-full items-center space-x-1 space-y-2 lg:space-y-0">
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="area" className="block text-sm font-medium text-sky-700 mb-1">Area</label>
+                                                    <input
+                                                        type="text"
+                                                        name="area"
+                                                        id="area"
+                                                        value={formDataCita.area}
+                                                        onChange={handleInputChange}
+                                                        // onKeyDown={handleEnterKeyPress}
+                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                    />
+                                                </div>
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="tipoConsulta" className="block text-sm font-medium text-sky-700 mb-1">Tipo Consulta</label>
+                                                    <input
+                                                        value={formDataCita.tipoConsulta}
+                                                        onChange={handleInputChange}
+                                                        type="text"
+                                                        name="tipoConsulta"
+                                                        id="tipoConsulta"
+                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                    />
+                                                </div>
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="fechaDeseada" className="block text-sm font-medium text-sky-700 mb-1">Fecha Deseada</label>
+                                                    <input
+                                                        value={formDataCita.fechaDeseada}
+                                                        onChange={handleInputChange}
+                                                        type="text"
+                                                        name="fechaDeseada"
+                                                        id="fechaDeseada"
+                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                    />
+                                                </div>
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="tipoAtencion" className="block text-sm font-medium text-sky-700 mb-1">Tipo Atención</label>
+                                                    <input
+                                                        value={formDataCita.tipoAtencion}
+                                                        onChange={handleInputChange}
+                                                        type="text"
+                                                        name="tipoAtencion"
+                                                        id="tipoAtencion"
+                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                    />
+                                                </div>
+
+                                            </div>
+                                            <div className="flex gap-2 flex-col lg:flex-row w-full items-center space-x-1 space-y-2 lg:space-y-0">
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="profesional" className="block text-sm font-medium text-sky-700 mb-1">Profesional</label>
+                                                    <input
+                                                        type="text"
+                                                        name="profesional"
+                                                        id="profesional"
+                                                        value={formDataCita.profesional}
+                                                        onChange={handleInputChange}
+                                                        // onKeyDown={handleEnterKeyPress}
+                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                    />
+                                                </div>
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="paciente" className="block text-sm font-medium text-sky-700 mb-1">Paciente</label>
+                                                    <div className="flex rounded-md shadow-sm">
+                                                        <button type="button" className="-ml-px shadow-md bg-sky-700 text-teal-50 relative inline-flex items-center space-x-2 px-4 py-2 border border-sky-700 text-sm font-medium rounded-l-md  hover:bg-emerald-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                                                            <MdPeopleAlt />
+                                                        </button>
+                                                        <input
+                                                            value={formDataCita.paciente}
+                                                            onChange={handleInputChange}
+                                                            type="text"
+                                                            name="paciente"
+                                                            id="paciente"
+                                                            className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                        />
+                                                        <button type="button" className="-ml-px shadow-md bg-sky-700 text-teal-50 relative inline-flex items-center space-x-2 px-4 py-2 border border-sky-700 text-sm font-medium rounded-r-md  hover:bg-emerald-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                                                            <FaSearch />
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="nombrePaciente" className="block text-sm font-medium text-sky-700 mb-1">Nombre Paciente</label>
+                                                    <input
+                                                        value={formDataCita.nombrePaciente}
+                                                        onChange={handleInputChange}
+                                                        type="text"
+                                                        name="nombrePaciente"
+                                                        id="nombrePaciente"
+                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                    />
+                                                </div>
+
+                                                <div className="flex-1 w-full">
+                                                    <label htmlFor="nota" className="block text-sm font-medium text-sky-700 mb-1">Nota</label>
+                                                    <input
+                                                        value={formDataCita.nota}
+                                                        onChange={handleInputChange}
+                                                        type="text"
+                                                        name="nota"
+                                                        id="nota"
+                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-end p-2 pb-4 pr-4">
+                                    <button className="bg-sky-700 text-white rounded-md p-2 px-3 hover:bg-sky-800">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Draggable >
+            )}
         </>
     )
 }

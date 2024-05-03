@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { HiOutlineMenuAlt4 } from "react-icons/hi";
-import { FaWpforms } from "react-icons/fa";
+import { MdPeopleAlt } from "react-icons/md";
+import { FaWpforms, FaSearch } from "react-icons/fa";
 import './styleAgendaMeet.css'
 import moment from "moment";
 import Draggable from "react-draggable";
@@ -81,7 +82,7 @@ const CalendarMeet = () => {
 
     return (
         <>
-            <div className="w-full h-full rounded-md">
+            <div className="w-full h-full rounded-md ">
                 <Calendar
                     localizer={localizer}
                     // events={formattedEvents}
@@ -99,6 +100,7 @@ const CalendarMeet = () => {
                         week: "Semana",
                         day: "Día",
                     }}
+                    views={['month', 'week', 'day']} // Especifica las vistas habilitadas
                 //defaultView="" // Vista por defecto
                 // onView={handleViewChange} // Cambiar la vista
                 //view={view} // Establecer la vista actual
@@ -110,7 +112,7 @@ const CalendarMeet = () => {
             {isOpen && (
                 <Draggable cancel=".cancel-drag">
                     <div id="defaultModal" tabindex="-1" aria-hidden="true" className="fixed inset-0 flex flex-col gap-4 items-center justify-center z-50 px-20">
-                        <div class="relative w-full h-max shadow-md">
+                        <div class="relative  h-max shadow-md">
 
                             <div class="h-full bg-white rounded-md shadow overflow-y-auto">
                                 <div className="flex w-full items-center justify-between bg-sky-700 text-white cursor-pointer rounded-t-md p-2 px-4">
@@ -125,8 +127,8 @@ const CalendarMeet = () => {
                                         <span className="sr-only">Close modal</span>
                                     </button>
                                 </div>
-                                <div className="cancel-drag p-8">
-                                    <div className="bg-gray-100 w-full h-[50%] overflow-y-auto md:h-max shadow-gray-400 border-[1px] p-4 px-5 pr-8 rounded-lg shadow-md mb-4">
+                                <div className="cancel-drag p-5 pb-2">
+                                    <div className="bg-gray-100 w-full h-[50%] overflow-y-auto md:h-max shadow-gray-400 border-[1px] p-4 px-5 pr-8 rounded-lg shadow-md">
                                         <div className="w-full space-y-6" >
                                             <div className="flex gap-2 flex-col lg:flex-row w-full items-center space-x-1 space-y-2 lg:space-y-0">
 
@@ -146,26 +148,41 @@ const CalendarMeet = () => {
 
                                                 <div className="flex-1 w-full">
                                                     <label htmlFor="horaAgenda" className="block text-sm font-medium text-sky-700 mb-1">Hora Agenda</label>
-                                                    <input
+                                                    <select
                                                         value={formDataCita.horaAgenda}
                                                         onChange={handleInputChange}
-                                                        type="text"
                                                         name="horaAgenda"
                                                         id="horaAgenda"
-                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
-                                                    />
+                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2"
+                                                    >
+                                                        {/* Aquí puedes agregar las opciones del select */}
+                                                        <option value="8:00">8:00 AM</option>
+                                                        <option value="9:00">9:00 AM</option>
+                                                        <option value="10:00">10:00 AM</option>
+                                                        {/* Agrega más opciones según sea necesario */}
+                                                    </select>
                                                 </div>
+
 
                                                 <div className="flex-1 w-full">
                                                     <label htmlFor="servicio" className="block text-sm font-medium text-sky-700 mb-1">Servicio</label>
-                                                    <input
-                                                        value={formDataCita.servicio}
-                                                        onChange={handleInputChange}
-                                                        type="text"
-                                                        name="servicio"
-                                                        id="servicio"
-                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
-                                                    />
+                                                    <div className="mt-1 flex rounded-md shadow-sm">
+                                                        <input
+                                                            value={formDataCita.servicio}
+                                                            onChange={handleInputChange}
+                                                            type="text"
+                                                            name="servicio"
+                                                            id="servicio"
+                                                            className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            //onClick={toggleModalFiltroIngreso}
+                                                            className="-ml-px shadow-md bg-sky-700 text-teal-50 relative inline-flex items-center space-x-2 px-4 py-2 border border-sky-700 text-sm font-medium rounded-r-md  hover:bg-sky-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                                                        >
+                                                            <FaSearch />
+                                                        </button>
+                                                    </div>
                                                 </div>
 
                                                 <div className="flex-1 w-full">
@@ -176,7 +193,8 @@ const CalendarMeet = () => {
                                                         type="text"
                                                         name="nombreServicio"
                                                         id="nombreServicio"
-                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                        className="flex-1 px-2 bg-gray-300 block w-max min-w-0 rounded-md sm:text-sm py-2 "
+                                                        disabled
                                                     />
                                                 </div>
 
@@ -250,14 +268,22 @@ const CalendarMeet = () => {
 
                                                 <div className="flex-1 w-full">
                                                     <label htmlFor="paciente" className="block text-sm font-medium text-sky-700 mb-1">Paciente</label>
-                                                    <input
-                                                        value={formDataCita.paciente}
-                                                        onChange={handleInputChange}
-                                                        type="text"
-                                                        name="paciente"
-                                                        id="paciente"
-                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
-                                                    />
+                                                    <div className="flex rounded-md shadow-sm">
+                                                        <button type="button" className="-ml-px shadow-md bg-sky-700 text-teal-50 relative inline-flex items-center space-x-2 px-4 py-2 border border-sky-700 text-sm font-medium rounded-l-md  hover:bg-emerald-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                                                            <MdPeopleAlt />
+                                                        </button>
+                                                        <input
+                                                            value={formDataCita.paciente}
+                                                            onChange={handleInputChange}
+                                                            type="text"
+                                                            name="paciente"
+                                                            id="paciente"
+                                                            className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                        />
+                                                        <button type="button" className="-ml-px shadow-md bg-sky-700 text-teal-50 relative inline-flex items-center space-x-2 px-4 py-2 border border-sky-700 text-sm font-medium rounded-r-md  hover:bg-emerald-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                                                            <FaSearch />
+                                                        </button>
+                                                    </div>
                                                 </div>
 
                                                 <div className="flex-1 w-full">
@@ -285,7 +311,11 @@ const CalendarMeet = () => {
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
+                                </div>
+                                <div className="flex items-center justify-end p-2 pb-4 pr-4">
+                                    <button className="bg-sky-700 text-white rounded-md p-2 px-3 hover:bg-sky-800">Guardar</button>
                                 </div>
                             </div>
                         </div>
