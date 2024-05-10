@@ -19,9 +19,12 @@ const Agendamiento = () => {
     const token = sessionStorage.getItem('token');
     const codigo_USR = sessionStorage.getItem('Codigo_USR');
 
+    // Estado para almacenar el nombre del área seleccionada
+    const [areaSeleccionada, setAreaSeleccionada] = useState('');
     const [fechaSeleccionada, setFechaSeleccionada] = useState('');
     const [horaMin, setHoraMin] = useState('');
     const [horaMax, setHoraMax] = useState('');
+    const [nombreArea, setNombreArea] = useState('');
     const [fechaActual, setFechaActual] = useState(new Date());
     const [fechaMax, setFechaMax] = useState(new Date());
     const [areas, setAreas] = useState([]);
@@ -37,8 +40,8 @@ const Agendamiento = () => {
     const [mostrarIcono, setMostrarIcono] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
 
-     // Datos Cita
-     const [formDataCita, setFormDataCita] = useState({
+    // Datos Cita
+    const [formDataCita, setFormDataCita] = useState({
         fechaAgenda: '',
         horaAgenda: '',
         servicio: '',
@@ -73,6 +76,7 @@ const Agendamiento = () => {
         const fechaActualISO = new Date().toISOString().split('T')[0];
         setFechaSeleccionada(fechaActualISO);
     }, []);
+
 
     {/*** Funcion para obtener la fecha seleccionada en el calendario ***/ }
     const handleFechaSeleccionada = (date) => {
@@ -177,6 +181,12 @@ const Agendamiento = () => {
             const codigosSeleccionados = areas.map(area => area.Codigo_ARE);
             console.log("Códigos seleccionados:", codigosSeleccionados);
             setCodigoCheckbox(codigosSeleccionados);
+
+            const nombreSeleccionado = areas.map(nombre => nombre.Nombre_ARE);
+            const nombreTexto = nombreSeleccionado.join(", "); // Concatena los nombres con una coma y un espacio entre ellos
+            console.log("Nombre seleccionado:", nombreTexto);
+
+            setNombreArea(nombreTexto);
             // Aquí puedes hacer cualquier otra acción con los códigos seleccionados
         };
 
@@ -423,20 +433,7 @@ const Agendamiento = () => {
         setMostrarModal(!mostrarModal)
     }
 
-    const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
-
-    const handleCellClick = (event) => {
-        const cell = event.target.closest('td');
-        if (cell) {
-            const cellRect = cell.getBoundingClientRect();
-            setModalPosition({
-                top: cellRect.top - 10, // Ajusta según sea necesario
-                left: cellRect.left - 10, // Ajusta según sea necesario
-            });
-            setMostrarModal(true);
-        }
-        console.log("habla")
-    };
+    // const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
 
     {/*** Funcion para listar las horas disponbles en la tabla***/ }
     useEffect(() => {
@@ -519,7 +516,7 @@ const Agendamiento = () => {
                                                 // Agregar evento onClick para mostrar el mensaje
                                                 cell.addEventListener("click", (event) => {
                                                     if (horaEnRango === horaFormateada) {
-                                                        handleCellClick(event);
+                                                        handleCellClick(event, horaEnRango, codigoAGE);
                                                     }
 
                                                 });
@@ -561,6 +558,31 @@ const Agendamiento = () => {
         }
 
     }, [codigosAGE, horaMin, horaMax])
+
+
+    const handleCellClick = (event, horaSeleccionada, codigoEspecialista) => {
+        setIsOpen(true);
+
+        // Filtrar el arreglo listaCabecera para encontrar el especialista con el código correspondiente
+        const especialista = listaCabecera.find(especialista => especialista.Codigo_AGE === codigoEspecialista);
+
+        // Verificar si se encontró el especialista
+        if (especialista) {
+            console.log("Nombre del especialista:", especialista.nombre_completo);
+        } else {
+            console.log("No se encontró ningún especialista con el código:", codigoEspecialista);
+        }
+
+        setFormDataCita({
+            fechaAgenda: fechaSeleccionada,
+            horaAgenda: horaSeleccionada,
+            fechaDeseada: fechaSeleccionada,
+            profesional: especialista.nombre_completo,
+            area: nombreArea
+        });
+
+        // console.log("Hora seleccionada:", horaSeleccionada);
+    };
 
     /*  const renderDayContent = (date) => {
           const dia = date.getDate();
@@ -634,8 +656,8 @@ const Agendamiento = () => {
                                 ) : (
                                     areas.map((area, index) => (
                                         <div key={index} className="flex items-center mt-2">
-                                            <input type="checkbox" id={`area-${index}`} className="form-checkbox h-4 w-4 text-green-500" defaultChecked={true} />
-                                            <label htmlFor={`area-${index}`} className="text-sm ml-2 text-white">{area.Nombre_ARE}</label>
+                                            <input type="checkbox" id={`area-${area.Codigo_ARE}`} className="form-checkbox h-4 w-4 text-green-500" defaultChecked={true} />
+                                            <label htmlFor={`area-${area.Codigo_ARE}`} className="text-sm ml-2 text-white">{area.Nombre_ARE}</label>
                                         </div>
                                     ))
                                 )}
@@ -714,7 +736,7 @@ const Agendamiento = () => {
                             <span className="sr-only">Close modal</span>
                         </button>
                     </div>
-                    <div className="px-4 hover:bg-gray-300 hover:rounded-sm cursor-pointer" onClick={() => {setMostrarModal(false); setIsOpen(true)}}>
+                    <div className="px-4 hover:bg-gray-300 hover:rounded-sm cursor-pointer" onClick={() => { setMostrarModal(false); setIsOpen(true) }}>
                         <p>Programar nueva cita</p>
                     </div>
                 </div>
@@ -724,7 +746,7 @@ const Agendamiento = () => {
                     <div id="defaultModal" tabindex="-1" aria-hidden="true" className="fixed inset-0 flex flex-col gap-4 items-center justify-center z-50 px-20">
                         <div class="relative  h-max shadow-md">
 
-                            <div class="h-full bg-white rounded-md shadow overflow-y-auto">
+                            <div class="h-full bg-white rounded-md shadow overflow-y-auto bg-opacity-25 backdrop-filter backdrop-blur-md bg-white bg-opacity-25 shadow-lg rounded-lg border border-gray-100 border-opacity-25">
                                 <div className="flex w-full items-center justify-between bg-sky-700 text-white cursor-pointer rounded-t-md p-2 px-4">
                                     <div className="flex items-center gap-1">
                                         <button className="text-xl">
@@ -738,7 +760,7 @@ const Agendamiento = () => {
                                     </button>
                                 </div>
                                 <div className="cancel-drag p-5 pb-2">
-                                    <div className="bg-gray-100 w-full h-[50%] overflow-y-auto md:h-max shadow-gray-400 border-[1px] p-4 px-5 pr-8 rounded-lg shadow-md">
+                                    <div className="w-full h-[50%] overflow-y-auto md:h-max bg-opacity-25 backdrop-filter backdrop-blur-md bg-white bg-opacity-85 shadow-lg rounded-lg border border-gray-100 border-opacity-25 p-4 px-5 pr-8">
                                         <div className="w-full space-y-6" >
                                             <div className="flex gap-2 flex-col lg:flex-row w-full items-center space-x-1 space-y-2 lg:space-y-0">
 
@@ -758,19 +780,16 @@ const Agendamiento = () => {
 
                                                 <div className="flex-1 w-full">
                                                     <label htmlFor="horaAgenda" className="block text-sm font-medium text-sky-700 mb-1">Hora Agenda</label>
-                                                    <select
-                                                        value={formDataCita.horaAgenda}
-                                                        onChange={handleInputChange}
+                                                    <input
+                                                        type="time"
                                                         name="horaAgenda"
                                                         id="horaAgenda"
-                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2"
-                                                    >
-                                                        {/* Aquí puedes agregar las opciones del select */}
-                                                        <option value="8:00">8:00 AM</option>
-                                                        <option value="9:00">9:00 AM</option>
-                                                        <option value="10:00">10:00 AM</option>
-                                                        {/* Agrega más opciones según sea necesario */}
-                                                    </select>
+                                                        value={formDataCita.horaAgenda}
+                                                        onChange={handleInputChange}
+                                                        // onKeyDown={handleEnterKeyPress}
+                                                        className="flex-1 px-2 bg-gray-300 block w-full min-w-0 rounded-md sm:text-sm py-2"
+                                                        disabled
+                                                    />
                                                 </div>
 
 
@@ -803,7 +822,7 @@ const Agendamiento = () => {
                                                         type="text"
                                                         name="nombreServicio"
                                                         id="nombreServicio"
-                                                        className="flex-1 px-2 bg-gray-300 block w-max min-w-0 rounded-md sm:text-sm py-2 "
+                                                        className="flex-1 px-2 bg-gray-300 block w-full min-w-0 rounded-md sm:text-sm py-2 "
                                                         disabled
                                                     />
                                                 </div>
@@ -820,20 +839,23 @@ const Agendamiento = () => {
                                                         value={formDataCita.area}
                                                         onChange={handleInputChange}
                                                         // onKeyDown={handleEnterKeyPress}
-                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                        className="flex-1 px-2 bg-gray-300 block w-full min-w-0 rounded-md sm:text-sm py-2 "
+                                                        disabled
                                                     />
                                                 </div>
 
                                                 <div className="flex-1 w-full">
                                                     <label htmlFor="tipoConsulta" className="block text-sm font-medium text-sky-700 mb-1">Tipo Consulta</label>
-                                                    <input
+                                                    <select
                                                         value={formDataCita.tipoConsulta}
                                                         onChange={handleInputChange}
-                                                        type="text"
                                                         name="tipoConsulta"
                                                         id="tipoConsulta"
                                                         className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
-                                                    />
+                                                    >
+                                                        <option value="primera-vez">Primera vez</option>
+                                                        <option value="control">Control</option>
+                                                    </select>
                                                 </div>
 
                                                 <div className="flex-1 w-full">
@@ -841,7 +863,7 @@ const Agendamiento = () => {
                                                     <input
                                                         value={formDataCita.fechaDeseada}
                                                         onChange={handleInputChange}
-                                                        type="text"
+                                                        type="date"
                                                         name="fechaDeseada"
                                                         id="fechaDeseada"
                                                         className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
@@ -850,15 +872,19 @@ const Agendamiento = () => {
 
                                                 <div className="flex-1 w-full">
                                                     <label htmlFor="tipoAtencion" className="block text-sm font-medium text-sky-700 mb-1">Tipo Atención</label>
-                                                    <input
+                                                    <select
                                                         value={formDataCita.tipoAtencion}
                                                         onChange={handleInputChange}
-                                                        type="text"
                                                         name="tipoAtencion"
                                                         id="tipoAtencion"
                                                         className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
-                                                    />
+                                                    >
+                                                        <option value="presencial">Presencial</option>
+                                                        <option value="seguimiento-telefonico">Seguimiento Telefónico o Virtual</option>
+                                                        <option value="telesalud">Atención por Telesalud</option>
+                                                    </select>
                                                 </div>
+
 
                                             </div>
                                             <div className="flex gap-2 flex-col lg:flex-row w-full items-center space-x-1 space-y-2 lg:space-y-0">
@@ -872,7 +898,8 @@ const Agendamiento = () => {
                                                         value={formDataCita.profesional}
                                                         onChange={handleInputChange}
                                                         // onKeyDown={handleEnterKeyPress}
-                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                        className="flex-1 px-2 bg-gray-300 block w-full min-w-0 rounded-md sm:text-sm py-2 "
+                                                        disabled
                                                     />
                                                 </div>
 
@@ -904,7 +931,8 @@ const Agendamiento = () => {
                                                         type="text"
                                                         name="nombrePaciente"
                                                         id="nombrePaciente"
-                                                        className="flex-1 px-2 shadow-md block w-full min-w-0 rounded-md sm:text-sm border-gray-300 py-2 "
+                                                        className="flex-1 px-2 bg-gray-300 block w-full min-w-0 rounded-md sm:text-sm py-2 "
+                                                        disabled
                                                     />
                                                 </div>
 
@@ -925,7 +953,7 @@ const Agendamiento = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-end p-2 pb-4 pr-4">
-                                    <button className="bg-sky-700 text-white rounded-md p-2 px-3 hover:bg-sky-800">Guardar</button>
+                                    <button className="bg-sky-700 text-white rounded-md p-1.5 px-3 hover:bg-sky-800">Guardar</button>
                                 </div>
                             </div>
                         </div>

@@ -126,7 +126,7 @@ const Login = () => {
         const { ID_USR, Nombre_USR, Email_USR, Activo_USR, Codigo_USR } = data.user;
         sessionStorage.setItem('token', data.Tokens);
         sessionStorage.setItem('Codigo_USR', Codigo_USR);
-       // sessionStorage.setItem('ID_USR', ID_USR);
+        // sessionStorage.setItem('ID_USR', ID_USR);
         sessionStorage.setItem('Nombre_USR', Nombre_USR);
         //sessionStorage.setItem('Email_USR', Email_USR);
         //sessionStorage.setItem('Activo_USR', Activo_USR);
@@ -212,7 +212,7 @@ const Login = () => {
                     </label>
                     <input
                       type="password"
-                      name="Password"
+                      name="Password" 
                       id="password"
                       placeholder="Contraseña"
                       className="w-full lg:w-80 h-10 pl-4 shadow-lg focus:outline-none focus:ring focus:ring-blue-500 rounded"
