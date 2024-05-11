@@ -39,6 +39,17 @@ const Agendamiento = () => {
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarIcono, setMostrarIcono] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [isOpenServicios, setIsOpenServicios] = useState(false);
+
+    const [seleccionServicios, setSeleccionServicios] = useState('');
+
+    //--- Estados filtro Ingreso ---//
+    const [listadoServicios, setListadoServicios] = useState([]);
+    const [listadoServiciosOriginal, setListadoServiciosOriginal] = useState([]);
+    const [filtroCategoriaServicios, setFiltroCategoriaServicios] = useState('');
+    const [filtroServicios, setFiltroServicios] = useState('');
+    const [filtroAplicadoServicios, setFiltroAplicadoServicios] = useState(false);
+    //--- Fin ---//
 
     // Datos Cita
     const [formDataCita, setFormDataCita] = useState({
@@ -584,42 +595,108 @@ const Agendamiento = () => {
         // console.log("Hora seleccionada:", horaSeleccionada);
     };
 
-    /*  const renderDayContent = (date) => {
-          const dia = date.getDate();
-          if (numeros.includes(dia)) {
-              return (
-                  <div className="relative bg-emerald-500">
-                  <p>{dia}</p>
-                  {numeroDia && (
-                      <div className="bg-emerald-500 top-10 bottom-0 left-0 bg-white shadow-md rounded-md p-2">
-                          <p className="text-sm">{numeroDia}</p>
-                      </div>
-                  )}
-              </div>
-              );
-          }
-          return dia;
-      };*/
+    useEffect(() => {
 
-    // Función para renderizar los eventos en el calendario
-    const renderizarEventos = ({ date, view }) => {
-        if (view === 'month') {
-            const dia = date.getDate();
-            if (numeros.includes(dia)) {
-                return (
-                    <div className="relative bg-emerald-500">
-                        <p className="bg-red-500">{dia}</p>
-                        {numeroDia && (
-                            <div className="bg-emerald-500 top-10 bottom-0 left-0 bg-white shadow-md rounded-md p-2">
-                                <p className="text-sm">{numeroDia}</p>
-                            </div>
-                        )}
-                    </div>
-                );
+        const listarServicios = async () => {
+
+            const formData = new FormData();
+            formData.append('nxs_db', nxsdb);
+            formData.append('Codigo_USR', codigo_USR);
+            // console.log(token);
+
+            setIsLoading(true);
+            try {
+                const response = await fetch('https://apimd.genomax.app/api/ListarServicios', {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Servicios", data);
+                    setListadoServicios(data.Servicios);
+                    setListadoServiciosOriginal(data.Servicios);
+
+
+                } else {
+                    // Si la respuesta tiene error, mostrar mensaje de error
+                    console.log("error")
+                }
+            } catch (error) {
+                // Si hay un error en la solicitud, mostrar mensaje de error
+                console.error('Error al enviar la solicitud:', error);
             }
-            return dia;
+        };
+
+        if (isOpen) {
+            listarServicios();
+        }
+
+    }, [isOpen])
+
+    const handleRowClickServicios = (idIngreso) => {
+        setSeleccionServicios(idIngreso);
+    };
+
+    // ----- Funciones Filtro Servicios -----//
+
+    const handleCategoryChangeServicios = (event) => {
+        const selectedCategory = event.target.value;
+        setFiltroCategoriaServicios(selectedCategory);
+        //setFiltroIngreso('')
+    };
+
+    const handleFilterChangeServicios = (event) => {
+        const inputFiltro = event.target.value;
+        setFiltroServicios(inputFiltro);
+    };
+
+    const handleKeyPressPacienteServicios = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Evitar que se envíe el formulario
+            aplicarFiltroServicios();
+
+            // Estado para detectar que se presiono la tecla enter y cambiar el mensaje de la tabla por el resultado del filtro
+            setFiltroAplicadoServicios(true);
         }
     };
+
+    const aplicarFiltroServicios = () => {
+
+        if (filtroCategoriaServicios === '' || filtroServicios === '') {
+            setListadoServicios(listadoServiciosOriginal); // Restaurar la lista original si no hay filtro seleccionado o filtro vacío
+            return;
+        }
+
+        const filteredServicios = listadoServiciosOriginal.filter((servicios) =>
+            servicios[filtroCategoriaServicios] && servicios[filtroCategoriaServicios].toLowerCase().includes(filtroServicios.toLowerCase())
+        );
+        setListadoIngresos(filteredServicios);
+        // console.log(filteredIngresos)
+    };
+
+    // Función para renderizar los eventos en el calendario
+    /*  const renderizarEventos = ({ date, view }) => {
+          if (view === 'month') {
+              const dia = date.getDate();
+              if (numeros.includes(dia)) {
+                  return (
+                      <div className="relative bg-emerald-500">
+                          <p className="bg-red-500">{dia}</p>
+                          {numeroDia && (
+                              <div className="bg-emerald-500 top-10 bottom-0 left-0 bg-white shadow-md rounded-md p-2">
+                                  <p className="text-sm">{numeroDia}</p>
+                              </div>
+                          )}
+                      </div>
+                  );
+              }
+              return dia;
+          }
+      };*/
 
     return (
         <>
@@ -806,7 +883,7 @@ const Agendamiento = () => {
                                                         />
                                                         <button
                                                             type="button"
-                                                            //onClick={toggleModalFiltroIngreso}
+                                                            onClick={() => setIsOpenServicios(true)}
                                                             className="-ml-px shadow-md bg-sky-700 text-teal-50 relative inline-flex items-center space-x-2 px-4 py-2 border border-sky-700 text-sm font-medium rounded-r-md  hover:bg-sky-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                                         >
                                                             <FaSearch />
@@ -959,6 +1036,99 @@ const Agendamiento = () => {
                         </div>
                     </div>
                 </Draggable >
+            )}
+            {isOpenServicios && (
+                <div>
+
+                    <div id="defaultModal" tabindex="-1" aria-hidden="true" className="fixed inset-0 flex flex-col gap-4 overflow-scroll items-center  py-5 z-50 bg-black bg-opacity-25 backdrop-blur shadow-xl rounded-lg border border-white border-opacity-25">
+                        <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
+
+                            <div class="relative p-4 bg-white rounded-lg shadow sm:p-5">
+
+                                <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
+                                    <h3 class="text-lg font-semibold text-[#729d3b] dark:text-white">
+                                        Buscar Ingresos...
+                                    </h3>
+                                    <button onClick={() => setIsOpenServicios(false)} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="defaultModal">
+                                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                                        <span class="sr-only">Close modal</span>
+                                    </button>
+                                </div>
+
+                                <form onSubmit={(event) => event.preventDefault()}>
+
+                                    <div class="grid gap-4 mb-4 sm:grid-cols-1">
+
+                                        <div className="flex flex-col lg:flex-row w-full gap-3">
+
+                                            <div className="lg:flex-1 w-full">
+                                                <select id="category" className="bg-gray-50 text-[#729d3b] border border-gray-300  text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" onChange={handleCategoryChangeServicios}>
+                                                    <option value="">Seleccione el filtro</option>
+                                                    <option value="Codigo_SER">Codigo Servicio</option>
+                                                    <option value="Nombre_SER">Nombre</option>
+                                                </select>
+                                            </div>
+
+                                            <div className="lg:flex-1 w-full">
+                                                <input type="text" value={filtroServicios} onChange={handleFilterChangeServicios} onKeyPress={handleKeyPressPacienteServicios} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" required="" />
+                                            </div>
+
+                                        </div>
+
+                                        <div class="sm:col-span-2 overflow-hidden ">
+                                            <label for="description" class="block mb-2 text-sm font-medium text-[#729d3b] dark:text-white">Resultado de Busqueda</label>
+
+                                            <div className="h-[200px]  overflow-x-auto  relative border sm:rounded-lg">
+                                                <table className="min-w-[1024px]  lg:w-full text-sm  text-gray-500 text-center">
+                                                    <thead className="text-xs text-gray-100 uppercase bg-[#729d3b]">
+                                                        <tr>
+                                                            <th scope="col" className="py-3 px-2">
+                                                               <p className="w-max"> Codigo Servicio</p>
+                                                            </th>
+                                                            <th scope="col" className="py-3 px-2">
+                                                                Nombre
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {filtroAplicadoServicios === false ? (
+                                                            <td >No hay resultados para mostrar.</td>
+                                                        ) : (
+                                                            <>
+                                                                {listadoServicios.map((item) => (
+                                                                    <tr key={item.Codigo_SER} className="bg-white border-b hover:bg-gray-50 cursor-pointer">
+                                                                        <td className="py-2.5 px-2 text-xs text-center mr-5">
+                                                                            {item.Codigo_SER}
+                                                                        </td>
+                                                                        <td className="py-2.5 px-2 text-xs text-left">
+                                                                            {item.Nombre_SER}
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </>
+                                                        )}
+                                                    </tbody>
+
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col lg:flex-row w-full justify-between ">
+                                        <div>
+                                            <label for="seleccion" className="block text-sm font-medium text-[#729d3b]">Seleccion</label>
+                                            <input type="number" className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" required="" disabled />
+                                        </div>
+                                        <button className="text-white h-12 mt-3  items-center bg-[#729d3b] flex justify-center lg:justify-end  hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                            <svg className="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+                                            Seleccionar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             )}
         </>
     )
