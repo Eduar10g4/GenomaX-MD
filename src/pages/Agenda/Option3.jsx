@@ -1,7 +1,10 @@
+import AgendaMedica from "../../components/CitasMedica/AgendaMedica/AgendaMedica";
 
 
-const option3 = () => {
-  return <div className="title">Option3</div>;
+const Option3 = () => {
+  <>
+  <AgendaMedica />
+  </>
 };
 
-export default option3;
+export default Option3;

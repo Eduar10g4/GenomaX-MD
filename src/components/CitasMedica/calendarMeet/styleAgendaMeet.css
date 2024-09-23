@@ -1,0 +1,69 @@
+.rbc-calendar {
+  height: 100%;
+  background-color: white;
+  padding: 8px;
+  margin-top: 8px;
+  border-radius: 10px;
+}
+
+.rbc-month-row {
+  border-bottom-right-radius: 8px; /* Ajusta el valor según sea necesario */
+}
+
+/*.rbc-row-bg {
+  border: 1px solid rgb(2 132 199);
+}*/
+
+.rbc-event {
+  background-color: rgb(16 185 129);
+}
+
+.rbc-event.rbc-selected {
+  background-color: rgb(5 150 105);
+}
+
+.rbc-event-content {
+  font-weight: 500;
+}
+
+.rbc-month-view {
+  border-radius: 8px;
+}
+
+.swal2-container.swal2-center.swal2-backdrop-show {
+  position: fixed;
+  z-index: 9999;
+}
+
+
+@media (max-width: 768px) {
+  .rbc-toolbar {
+    width: 100%;
+    display: block;
+    margin: 0%;
+  }
+
+  .rbc-toolbar-label {
+    display: block;
+  }
+
+  .rbc-btn-group {
+    width: 100%;
+  }
+
+  .rbc-btn-group button {
+    width: 33.3%;
+  }
+
+  .rbc-toolbar-label {
+    font-size: 17px;
+    font-weight: 500;
+    margin-top: 15px;
+  }
+
+  .rbc-button-link {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}

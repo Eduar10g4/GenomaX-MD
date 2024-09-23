@@ -1,14 +1,13 @@
 import React, { useState, useContext } from "react";
-import Calendar_Md from "../../components/calendar";
+//import Calendar_Md from "../../components/calendario/calendar";
+import Agendamiento from "../../components/CitasMedica/Agendamiento/agendamiento";
 
 
 const Option1 = () => {
-  
+
   return (
     <>
-      <div className="w-full h-full ">
-        <Calendar_Md />
-      </div>
+      <Agendamiento />
     </>
   )
 }
